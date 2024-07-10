@@ -18,7 +18,7 @@ p = 0.1   #probability any two edges are connected
 
 #Initialize population with cultural traits
 #In the beginning, each individual has the same trait  
-Pop <- rep(1, N)
+Traits <- rep(1, N)
 
 #Counter variable to hold the largest id of traits so far; this is to make sure all innovations are novel variants
 Counter = 1
@@ -47,7 +47,7 @@ A <- as.matrix(get.adjacency(g, type = "both"))
 #Loop over generations
 for (t in 1:tmax) {
 
-  Pop_new <- c()
+  Traits_new <- c()
   
   #Cultural Transmission in network
   for (i in 1:N) {
@@ -70,21 +70,21 @@ for (t in 1:tmax) {
       Models <- i
     }
     
-    Pop_new[i] <- Pop[Models]  
+    Traits_new[i] <- Traits[Models]  
   }
   
   # Replace population with new generation
-  Pop <- Pop_new
+  Traits <- Traits_new
   
   # Innovation
   Innovators <- rbinom(N,1,mu)
-  Pop[Innovators == 1] <- (Counter + 1) : (Counter + length(which(Innovators==1)))
+  Traits[Innovators == 1] <- (Counter + 1) : (Counter + length(which(Innovators==1)))
   
   #Update counter
-  Counter <- max(Pop)
+  Counter <- max(Traits)
   
   #Store number of unique variants
-  Div_NoTraits <- c( Div_NoTraits ,length(unique(Pop)))
+  Div_NoTraits <- c( Div_NoTraits ,length(unique(Traits)))
   
 }#t
 
@@ -96,7 +96,7 @@ par(mfrow = c(2,1),
 
 
 color = sample(grDevices::colors()[grep('gr(a|e)y', grDevices::colors(), invert = T)][-1])
-V(g)$color <- sample(color[sapply(1:N, function(x) which(unique(Pop) == Pop[x]))])
+V(g)$color <- sample(color[sapply(1:N, function(x) which(unique(Traits) == Traits[x]))])
 V(g)$frame.color <- V(g)$color
 plot(g, vertex.label= NA, edge.arrow.size=0.1,vertex.size = 5)
 
